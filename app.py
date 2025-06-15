@@ -121,10 +121,10 @@ def delete_user(user_id):
 # Функция подключения к базе данных
 def get_db_connection():
     conn = mysql.connector.connect(
-        host='localhost',
-        user='root',          # Замените на вашего пользователя MySQL
-        password='',  # Замените на ваш пароль MySQL
-        database='todolist',
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        database=os.getenv('DB_NAME'),
         charset='utf8mb4',
         collation='utf8mb4_unicode_ci'
     )
@@ -299,6 +299,3 @@ def reorder_tasks():
         return jsonify({'status': 'success'}), 200
     else:
         return jsonify({'status': 'error', 'message': 'Неверные данные'}), 400
-
-if __name__ == '__main__':
-    app.run(debug=True)
