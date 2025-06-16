@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Замените на безопасный ключ
@@ -80,15 +79,14 @@ def edit_user(user_id):
         data = request.get_json()
         if data and 'username' in data and 'is_admin' in data:
             username = data['username']
-            is_admin = data['is_admin']
+            is_admin_status = data['is_admin']  # Переименованная локальная переменная
             password = data.get('password')
             if password:
                 cur.execute("UPDATE users SET login = %s, password = %s, is_admin = %s WHERE id = %s",
-                (username, password, is_admin, user_id))
+                            (username, password, is_admin_status, user_id))
             else:
                 cur.execute("UPDATE users SET login = %s, is_admin = %s WHERE id = %s",
-                (username, is_admin, user_id))
-
+                            (username, is_admin_status, user_id))
             conn.commit()
             return jsonify({'status': 'success'}), 200
         else:
@@ -300,7 +298,3 @@ def reorder_tasks():
         return jsonify({'status': 'success'}), 200
     else:
         return jsonify({'status': 'error', 'message': 'Неверные данные'}), 400
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
